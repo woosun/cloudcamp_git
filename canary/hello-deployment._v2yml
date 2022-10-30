@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hello-server-v2
+  labels:
+    app: hello
+    version: v2
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hello
+      version: v2
+  template:
+    metadata:
+      labels:
+        app: hello
+        version: v2
+    spec:
+      containers:
+      - image: honester/hello-server:v2
+        imagePullPolicy: IfNotPresent
+        name: hello-server-v2

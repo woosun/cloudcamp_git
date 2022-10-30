@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpbin
+  labels:
+    app: httpbin
+spec:
+  containers:
+  - image: docker.io/honester/httpbin:latest
+    imagePullPolicy: IfNotPresent
+    name: httpbin
