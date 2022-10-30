@@ -1,0 +1,25 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-hello
+spec:
+  hosts:
+    - svc-hello
+  http:
+  - match:
+    - headers:
+        end-user:
+          exact: "testers"
+    route:
+    - destination:
+        host: svc-hello
+        subset: v1
+      weight: 50
+    - destination:
+        host: svc-hello
+        subset: v2
+      weight: 50
+  - route:
+    - destination:
+        host: svc-hello
+        subset: v1

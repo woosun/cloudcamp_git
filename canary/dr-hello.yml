@@ -3,7 +3,7 @@ kind: DestinationRule
 metadata:
   name: dr-hello
 spec:
-  host: svc-hello.default.svc.cluster.local
+  host: svc-hello
   subsets:
   - name: v1
     labels:
