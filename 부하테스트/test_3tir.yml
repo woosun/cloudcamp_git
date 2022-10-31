@@ -1,0 +1,108 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: prod
+  name: was-deploy
+  labels:
+    version: was_29
+spec:
+  selector:
+    matchLabels:
+      servertype: was-cpu
+      type: was
+      app: backend
+      version: was_29
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        servertype: was-cpu
+        type: was
+        app: backend
+        version: was_29
+    spec:
+      containers:
+      - name: was
+        image: yoskr/gunicon:29
+        envFrom:
+          - configMapRef:
+              name: cm-was  #cm-dev 설정파일을 불러오자
+          - secretRef:
+              name: sec-mysql  #mysql 설정파일을 불러오자
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 200m
+        ports:
+        - containerPort: 8080
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: prod
+  name: web-deploy
+  labels:
+    version: web_14
+spec:
+  selector:
+    matchLabels:
+      servertype: web-cpu
+      type: web
+      app: frontend
+      version: web_14
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        servertype: web-cpu
+        type: web
+        app: frontend
+        version: web_14
+    spec:
+      containers:
+      - name: web
+        image: yoskr/nginx:14
+        resources:
+          requests:
+            cpu: 100m
+          limits:
+            cpu: 200m
+        envFrom:
+        - configMapRef:
+            name: cm-httpd  #cm-httpd 설정파일을 불러오자
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - mountPath: /usr/share/nginx/html
+          name: web-pvc-pv
+      volumes:
+      - name : web-pvc-pv
+        persistentVolumeClaim:
+          claimName: pvc-web
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: prod
+  name: mysql-server
+  labels:
+      app: mysql
+      type: dbms
+      version: db_0
+spec:
+  containers:
+  - name: mysql
+    image: mysql
+    ports:
+    - containerPort: 3306
+    envFrom:
+    - secretRef:
+        name: sec-mysql  #mysql 설정파일을 불러오자
+    volumeMounts:
+    - mountPath: /var/lib/mysql
+      name: mysql-pvc-pv
+  volumes:
+  - name : mysql-pvc-pv
+    persistentVolumeClaim:
+      claimName: mysql-pvc
