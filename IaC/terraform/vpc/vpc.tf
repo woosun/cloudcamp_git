@@ -88,6 +88,6 @@ resource "aws_instance" "app_server" {
 output "app_server_public_ip" { #출력
   description = "AWS_Public_Ip"
   value = aws_instance.app_server.public_ip
-  
+
 }
 # enable_dns_hostnames- (선택 사항) VPC에서 DNS 호스트 이름을 활성화/비활성화하는 부울 플래그. 기본값은 false입니다.
