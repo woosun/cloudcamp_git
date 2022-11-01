@@ -7,3 +7,8 @@ variable "app_server_in_type" {
   type = string
   default = "t2.micro"
 }
+
+variable "app_server_name" {
+  type = string
+  default = "ec2_name"
+}
