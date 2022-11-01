@@ -35,17 +35,6 @@ resource "aws_security_group" "ec2_allow_rule" {
   }
 }
 
-
-variable "app_server_ami" {
-  type = string
-  default = "ami-068a0feb96796b48d"
-}
-
-variable "app_server_in_type" {
-  type = string
-  default = "t2.micro"
-}
-
 resource "aws_instance" "app_server" { #리소스
   ami           = var.app_server_ami #이미지명 > 변수로 만듬
   instance_type = var.app_server_in_type
@@ -55,6 +44,19 @@ resource "aws_instance" "app_server" { #리소스
   }
 }
 
-#output "name" { #출력
+output "app_server_public_ip" { #출력
+  description = "AWS_Public_Ip"
+  value = aws_instance.app_server.public_ip
   
-#}
+}
+
+# VPC설정하기 
+
+#VPC
+#서브넷 > 리전별
+#라우팅테이블
+#인터넷게이트웨이
+#
+
+
+# terraform apply -var "app_server_ami=ami-09cf633fe86e51bf0" // 변수에 다른값 지정하기 아마존눅스의 ami : ami-09cf633fe86e51bf0

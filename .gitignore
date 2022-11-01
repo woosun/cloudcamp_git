@@ -2,3 +2,8 @@ IaC/terraform/ex01/.terraform.lock.hcl
 IaC/terraform/ex01/terraform.tfstate
 IaC/terraform/ex01/.terraform/providers/registry.terraform.io/hashicorp/aws/4.37.0/windows_386/terraform-provider-aws_v4.37.0_x5.exe
 IaC/terraform/ex01/terraform.tfstate.backup
+IaC/terraform/vpc/.terraform.lock.hcl
+IaC/terraform/vpc/.terraform.tfstate.lock.info
+IaC/terraform/vpc/terraform.tfstate
+IaC/terraform/vpc/.terraform/providers/registry.terraform.io/hashicorp/aws/4.37.0/windows_386/terraform-provider-aws_v4.37.0_x5.exe
+IaC/terraform/vpc/terraform.tfstate.backup
