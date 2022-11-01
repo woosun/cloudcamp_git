@@ -1,0 +1,15 @@
+AWSTemplateFormatVersion: 2010-09-09
+Resources:
+  EC2Instance:
+      Type: AWS::EC2::Instance
+      Properties:
+          ImageId: ami-068a0feb96796b48d
+          KeyName: ec01
+          InstanceType: t2.micro
+          SecurityGroups:
+          - default
+          BlockDeviceMappings:
+          -
+            DeviceName: /dev/sda1
+            Ebs:
+              VolumeSize: 8
