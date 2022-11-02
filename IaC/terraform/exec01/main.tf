@@ -10,7 +10,6 @@ resource "aws_vpc" "my-vpc2" {
     Name = "my-vpc2"
   }
 }
-
 resource "aws_subnet" "my-subnet_a" {
   vpc_id = aws_vpc.my-vpc2.id
   cidr_block = "200.200.10.0/24"
@@ -31,7 +30,6 @@ resource "aws_subnet" "my-subnet_c" {
 }
 resource "aws_internet_gateway" "my-igw2" {
     vpc_id = aws_vpc.my-vpc2.id
-
     tags = {
       Nmae = "my-igw2"
     }
@@ -54,12 +52,11 @@ resource "aws_route_table_association" "my-subnet_a_my-ro-table" {
   route_table_id = aws_route_table.my-ro-table.id
 }
 
-
 resource "aws_security_group" "default_sg_add" {
+  vpc_id = aws_vpc.my-vpc2.id
   for_each = var.sg_list
   dynamic ingress {
-    for_each = var.each.value.
-    
+    for_each = var.inbound_port
     content {
       from_port   = ingress.key
       to_port     = ingress.key
@@ -74,6 +71,6 @@ resource "aws_security_group" "default_sg_add" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${each.key}"
+    Name = "${var.sg_name}"
   }
 }

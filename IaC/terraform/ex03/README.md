@@ -14,6 +14,7 @@
 		ex) [1, 2, 3]
 
 	map : Key-Value 형식의 데이터, key 값은 string이여야함
+  같은 라인의 값은 동일한 형식어야함.
 		ex) { k : v, k2 : v2 }
 
 
