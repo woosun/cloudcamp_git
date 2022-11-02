@@ -2,6 +2,85 @@ provider "aws" {
   region  = "ap-northeast-2" #리전명
 }
 
+
+
+variable "sg_port" {
+  type        = map
+  default     = {
+    "22" : ["221.162.65.184/32"]
+    "80" : ["0.0.0.0/0"]
+  }
+}
+resource "aws_security_group" "default_sg_add" {
+  dynamic ingress {
+    for_each = var.sg_port
+    content {
+      from_port   = ingress.key
+      to_port     = ingress.key
+      cidr_blocks = ingress.value
+      protocol    = "tcp"
+    }
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "default_sg_add"
+  }
+}
+
+output "default_sg_add_description" { #출력
+  description = "default_sg_add_description"
+  value = aws_security_group.default_sg_add.ingress
+}
+/*
+variable "sg_list" {
+  type        = map
+  default     = {
+    "ssh_sg":22, "web_sg":80,"was_sg":8009
+  }
+}
+resource "aws_security_group" "default_sg_add" {
+  for_each = var.sg_list
+  ingress {
+    description = each.key
+    from_port   = each.value
+    to_port     = each.value
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  tags = {
+    Name = "${each.key}"
+  }
+}
+
+
+output "default_sg_add_description" { #출력
+  description = "default_sg_add_description"
+
+  value = [ for sg in aws_security_group.default_sg_add : sg.id ]
+  
+}
+output "default_sg_add_to_port" { #출력
+  description = "default_sg_add_to_port"
+  value = [ for sg_name in aws_security_group.default_sg_add : sg_name.ingress.*.to_port  ]
+}
+*/
+
+
+
+/*
+
+
 resource "aws_instance" "app_server" { #리소스
   ami           = var.app_server_ami #이미지명 > 변수로 만듬
   instance_type = var.app_server_in_type
@@ -17,7 +96,7 @@ output "app_server_public_ip" { #출력
   description = "AWS_Public_Ip"
   value = [ for server in aws_instance.app_server : server.public_ip ]
 }
-
+*/
 
 #내 기본 VPC에 있는 기본 보안그룹이름 : sg-02567aade589e3c60
 
