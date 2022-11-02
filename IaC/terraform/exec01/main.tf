@@ -1,62 +1,13 @@
 provider "aws" { 
   region  = "ap-northeast-2" #리전명
 }
-#vpc
-resource "aws_vpc" "my-vpc2" {
-  cidr_block       = "200.200.0.0/16"
-  enable_dns_hostnames = true
-  instance_tenancy = "default"
-  tags = {
-    Name = "my-vpc2"
-  }
-}
-resource "aws_subnet" "my-subnet_a" {
-  vpc_id = aws_vpc.my-vpc2.id
-  cidr_block = "200.200.10.0/24"
-  availability_zone = "ap-northeast-2a"
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "my-subnet_a"
-  }
-}
-resource "aws_subnet" "my-subnet_c" {
-  vpc_id = aws_vpc.my-vpc2.id
-  cidr_block = "200.200.20.0/24"
-  availability_zone = "ap-northeast-2c"
-  map_public_ip_on_launch = true
-  tags = {
-    Name = "my-subnet_c"
-  }
-}
-resource "aws_internet_gateway" "my-igw2" {
-    vpc_id = aws_vpc.my-vpc2.id
-    tags = {
-      Nmae = "my-igw2"
-    }
-}
-#라우팅테이블
-resource "aws_route_table" "my-ro-table" {
-  vpc_id = aws_vpc.my-vpc2.id
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.my-igw2.id
-  }
-
-  tags = {
-    Name = "my-ro-table"
-  }
-}
-resource "aws_route_table_association" "my-subnet_a_my-ro-table" {
-  subnet_id      = aws_subnet.my-subnet_a.id
-  route_table_id = aws_route_table.my-ro-table.id
-}
 
 resource "aws_security_group" "default_sg_add" {
   vpc_id = aws_vpc.my-vpc2.id
   for_each = var.sg_list
   dynamic ingress {
-    for_each = var.inbound_port
+    for_each = each.value
     content {
       from_port   = ingress.key
       to_port     = ingress.key
@@ -71,6 +22,26 @@ resource "aws_security_group" "default_sg_add" {
     cidr_blocks = ["0.0.0.0/0"]
   }
   tags = {
-    Name = "${var.sg_name}"
+    Name = "${each.key}"
   }
 }
+
+resource "aws_instance" "app_server" {
+  for_each = toset(var.app_list)
+  ami           = var.app_server_ami
+  instance_type = var.app_server_in_type
+  key_name = "ec01"
+  subnet_id = each.value == "web" ? aws_subnet.my-subnet["a"].id :  aws_subnet.my-subnet["c"].id 
+  #서브넷아이디 web서버면 서브넷a was서버면 서브넷c 에 셋팅
+  associate_public_ip_address = true #공용아이피주소
+  vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] 
+  tags = {
+    Name = "${each.value}"
+  }
+}
+
+output "app_server_public_ip" { #출력
+  description = "AWS_Public_Ip"
+  value = [for ec2 in aws_instance.app_server : ec2.public_ip ]
+}
+

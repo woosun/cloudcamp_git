@@ -135,4 +135,12 @@
 - main.tf 
 - variables.tf
 - ※ terraform이 알아서 실행될수 있도록 왠만한 값들은 모두 변수에서 참조해서 작성해야 꼬이지 않는다
-- 
+
+
+## EC2생성 보안그룹 설정 바꾸기.
+
+- 기존 모든 보안그룹 다가져오기
+- vpc_security_group_ids = [ for sg in aws_security_group.default_sg_add: sg.id ]
+
+- 변경 
+- vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]

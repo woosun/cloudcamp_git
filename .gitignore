@@ -24,3 +24,9 @@ IaC/terraform/ex04/terraform.tfstate
 IaC/terraform/ex04/.terraform/providers/registry.terraform.io/hashicorp/aws/4.37.0/windows_386/terraform-provider-aws_v4.37.0_x5.exe
 IaC/terraform/exec01/.terraform/modules/modules.json
 IaC/terraform/ex04/terraform.tfstate.backup
+IaC/terraform/ex05/.terraform.lock.hcl
+IaC/terraform/ex05/terraform.tfstate
+IaC/terraform/ex05/terraform.tfstate.backup
+IaC/terraform/ex05/.terraform/providers/registry.terraform.io/hashicorp/aws/4.37.0/windows_386/terraform-provider-aws_v4.37.0_x5.exe
+IaC/terraform/exec01/terraform.tfstate
+IaC/terraform/exec01/terraform.tfstate.backup

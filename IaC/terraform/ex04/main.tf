@@ -9,7 +9,7 @@ resource "aws_instance" "app_server" {
   key_name = "ec01"
   subnet_id = aws_subnet.my-subnet["a"].id #서브넷아이디(가용영역)
   associate_public_ip_address = true #공용아이피주소
-  vpc_security_group_ids = [ for sg in aws_security_group.default_sg_add: sg.id ]
+  vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
   tags = {
     Name = "${each.value}"
   }
