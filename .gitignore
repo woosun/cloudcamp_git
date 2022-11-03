@@ -39,3 +39,8 @@ IaC/terraform/ex06/.terraform/providers/registry.terraform.io/hashicorp/null/3.2
 IaC/terraform/ex07/ec01.pem
 IaC/terraform/ex07/.terraform/providers/registry.terraform.io/hashicorp/aws/4.37.0/windows_386/terraform-provider-aws_v4.37.0_x5.exe
 IaC/terraform/ex07/.terraform.lock.hcl
+IaC/terraform/ex06/ec01.pem
+.gitignore
+IaC/terraform/ex07/terraform.tfstate.backup
+IaC/terraform/ex07/terraform.tfstate
+IaC/terraform/ex06/.terraform.tfstate.lock.info

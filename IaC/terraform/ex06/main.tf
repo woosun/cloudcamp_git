@@ -35,28 +35,49 @@ resource "aws_instance" "app_server" {
   subnet_id = each.value == "web" ? aws_subnet.my-subnet["a"].id :  aws_subnet.my-subnet["c"].id 
   associate_public_ip_address = true #공용아이피주소
   vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
-  user_data = <<-EOF
-  #! /bin/bash
-  export DB_HOST=${aws_db_instance.mysql_db.address}
-  export DB_USER=admin
-  export MYSQL_ROOT_PASSWORD=qwer1234
-  export DB_DBNAME=yoskr_db
-  sudo apt update -y
-  sudo apt install software-properties-common
-  sudo add-apt-repository ppa:deadsnakes/ppa
-  sudo apt -y install python3.9 python3.9-distutils
-  sudo curl https://bootstrap.pypa.io/get-pip.py -o /apps/get-pip.py
-  sudo python3.9 /apps/git-pip.py
-  sudo apt -y install git
-  git clone https://github.com/woosun/backend.git
-  cd ./backend/
-  pip3 install -r ./requirements.txt
-  gunicorn --bind 0.0.0.0:8000 wsgi:app &
-  EOF
+
+  provisioner "file" {
+    source = each.value == "web" ? "web.sh" : "was.sh"
+    destination = each.value == "web" ? "/tmp/web.sh" : "/tmp/was.sh"
+  }
+  provisioner "file" {
+    source      = each.value == "web" ? "web_start.sh" : "was_start.sh"
+    destination = each.value == "web" ? "/tmp/web_start.sh" : "/tmp/was_start.sh"
+  }
+  connection {
+    type        = "ssh"
+    host        = self.public_ip
+    user        = "ubuntu"
+    private_key = file("ec01.pem")
+  }
+
+  provisioner "remote-exec" {
+    inline = each.value == "web" ? [
+      "sudo echo 'export WAS_ADDR=${aws_instance.app_server["was"].private_ip}' >> /tmp/env_was_host",
+      "sudo echo 'export WEB_PUB_ADDR=${self.public_ip}' >> /tmp/env_was_host",
+      "chmod +x /tmp/web.sh",
+      "sudo /tmp/web.sh",
+      "chmod +x /tmp/web_start.sh",
+      "nohup /tmp/web_start.sh &",
+      "sleep 1"
+    ] : [
+      "sudo echo 'export DB_HOST=${aws_db_instance.mysql_db.address}' >> /tmp/env_db_host",
+      "sudo echo 'export DB_USER=admin' >> /tmp/env_db_host",
+      "sudo echo 'export DB_DBNAME=yoskr_db' >> /tmp/env_db_host",
+      "sudo echo 'export MYSQL_ROOT_PASSWORD=qwer1234' >> /tmp/env_db_host",
+      "chmod +x /tmp/was.sh",
+      "sudo /tmp/was.sh",
+      "chmod +x /tmp/was_start.sh",
+      "nohup /tmp/was_start.sh &",
+      "sleep 1"
+    ]
+    
+  }
   tags = {
-    Name = "${each.value}"
+      Name = "${each.value}"
   }
 }
+
 output "app_server_public_ip" { #출력
   description = "AWS_Public_Ip"
   value = [for ec2 in aws_instance.app_server : ec2.public_ip ]
