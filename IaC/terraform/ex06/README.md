@@ -36,6 +36,37 @@ output "app_server_public_ip" { #출력
   value = aws_instance.app_server.public_ip
 }
 ```
+## Terraform 프로비저너 배우기
+
+### provisioner
+> local-exec #지금 작동중인 컴퓨터(즉 테라폼이 실행되는 컴퓨터에서 실행)
+```
+resource "null_resource" "db_setup" {
+  depends_on = [aws_db_instance.mysql_db ] #db 인스턴스의 mysql_db가 생성이 되면 실행하는 리소스이다 라는뜻
+  
+  provisioner "local-exec" { #로컬에서 실행한다.
+    command = "mysql -u admin --password=qwer1234 -h ${aws_db_instance.mysql_db.address} --database=yoskr_db < ./rds.sql "
+  }
+}
+```
+> file #파일을 복사
+```
+provisioner "file" {
+  source      = "was.sh"
+  destination = "/tmp/was.sh"
+}
+```
+> remote-exec #원격컴퓨터에서 실행
+```
+provisioner "remote-exec" {
+  inline = [
+    "chmod +x /tmp/was.sh",
+    "sudo /tmp/was.sh"
+  ]
+}
+```
+## 로컬에 있는 파일을 생성하는 리소스를 보자
+
 
 ## 실습
 1. nginx ec2

@@ -32,17 +32,27 @@ resource "aws_instance" "app_server" {
   ami           = "ami-068a0feb96796b48d"
   instance_type = "t2.micro"
   key_name = "ec01"
-  subnet_id = aws_subnet.my-subnet["a"].id #서브넷아이디(가용영역)
+  subnet_id = each.value == "web" ? aws_subnet.my-subnet["a"].id :  aws_subnet.my-subnet["c"].id 
   associate_public_ip_address = true #공용아이피주소
   vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
-  
   user_data = <<-EOF
-  #!/bin/bash
-  sudo wget 
-  sudo apt install -y apache2
-  sudo systemctl restart apache2
+  #! /bin/bash
+  export DB_HOST=${aws_db_instance.mysql_db.address}
+  export DB_USER=admin
+  export MYSQL_ROOT_PASSWORD=qwer1234
+  export DB_DBNAME=yoskr_db
+  sudo apt update -y
+  sudo apt install software-properties-common
+  sudo add-apt-repository ppa:deadsnakes/ppa
+  sudo apt -y install python3.9 python3.9-distutils
+  sudo curl https://bootstrap.pypa.io/get-pip.py -o /apps/get-pip.py
+  sudo python3.9 /apps/git-pip.py
+  sudo apt -y install git
+  git clone https://github.com/woosun/backend.git
+  cd ./backend/
+  pip3 install -r ./requirements.txt
+  gunicorn --bind 0.0.0.0:8000 wsgi:app &
   EOF
-  
   tags = {
     Name = "${each.value}"
   }
@@ -50,10 +60,4 @@ resource "aws_instance" "app_server" {
 output "app_server_public_ip" { #출력
   description = "AWS_Public_Ip"
   value = [for ec2 in aws_instance.app_server : ec2.public_ip ]
-}
-output "my-subnet-Name" {
-    value = [for my-subnet in aws_subnet.my-subnet: my-subnet.tags.Name]
-}
-output "my-sg-Name" {
-    value = [for my-sg in aws_security_group.default_sg_add: my-sg.tags.Name]
 }

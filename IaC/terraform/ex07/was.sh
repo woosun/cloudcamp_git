@@ -1,5 +1,4 @@
 #! /bin/bash
-export DB_HOST=${aws_db_instance.mysql_db.address}
 export DB_USER=admin
 export MYSQL_ROOT_PASSWORD=qwer1234
 export DB_DBNAME=yoskr_db
@@ -13,4 +12,3 @@ sudo apt -y install git
 git clone https://github.com/woosun/backend.git
 cd ./backend/
 pip3 install -r ./requirements.txt
-gunicorn --bind 0.0.0.0:8000 wsgi:app &
