@@ -16,6 +16,16 @@ resource "aws_subnet" "my-subnet" {
     Name = "my-subnet-${each.key}"
   }
 }
+
+#db 생성을 위한 db 서브넷 별도생성
+resource "aws_db_subnet_group" "default" {
+  name       = "mysql"
+  subnet_ids = [aws_subnet.my-subnet["a"].id,aws_subnet.my-subnet["c"].id]
+  tags = {
+    Name = "My DB subnet group"
+  }
+}
+
 resource "aws_internet_gateway" "my-igw" {
   vpc_id = aws_vpc.my-vpc.id
   tags = {

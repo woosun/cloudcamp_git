@@ -38,8 +38,47 @@ output "app_server_public_ip" { #출력
 ```
 
 ## 실습
-+ nginx ec2
-+ gunicon ec2
-+ mysql rds
-+ 3개연결
-+ VPC 생성하여
+1. nginx ec2
+2. gunicon ec2
+3. mysql rds
+4. 3개연결
+5. VPC 생성하여
+
+1. mysql rds 만들기
+>  - db 생성을 위한 db 서브넷 별도생성
+>  - db 보안그룹 생성
+>  - db rds 생성
+>  - 테라폼 환경에서 db 접속하여 테이블 생서 mysql -u admin --password=qwer1234 -h 주소 --database=yoskr_db < c:\rds.sql
+> > - mysql 다운받고 c:에 풀고 path 환경변수에 등록 C:\mysql\bin
+2. gunicon ec2 생성
+>  - 파이썬 설치
+```
+#ubuntu
+#파이썬 설치
+#!/bin/bash
+sudo apt update -y
+sudo apt install software-properties-common -y
+sudo add-apt-repository ppa:deadsnakes/ppa
+#파이썬 설치
+sudo apt -y install python3.9
+#깃설치
+sudo apt-get -y install git
+sudo apt -y install git
+alias python=python3
+alias pip=pip3
+#깃으로 클론떠오기
+git clone https://github.com/woosun/backend.git
+cd ./backend/
+pip install -r /requirements.txt
+gunicorn --bind 0.0.0.0:8000 wsgi:app
+```
+
+
+
+
+
+
+#사용자생성 및 nginx에게 user 그룹권한 주기
+useradd -m user
+usermod -a -G user nginx
+chmod 750 /home/user
