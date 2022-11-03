@@ -55,9 +55,9 @@ resource "aws_instance" "app_server" {
     inline = each.value == "web" ? [
       "sudo echo 'export WAS_ADDR=${aws_instance.app_server["was"].private_ip}' >> /tmp/env_was_host",
       "sudo echo 'export WEB_PUB_ADDR=${self.public_ip}' >> /tmp/env_was_host",
+      "chmod +x /tmp/web_start.sh",
       "chmod +x /tmp/web.sh",
       "sudo /tmp/web.sh",
-      "chmod +x /tmp/web_start.sh",
       "nohup /tmp/web_start.sh &",
       "sleep 1"
     ] : [
