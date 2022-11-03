@@ -17,6 +17,7 @@ resource "aws_subnet" "my-subnet" {
   }
 }
 
+
 #db 생성을 위한 db 서브넷 별도생성
 resource "aws_db_subnet_group" "default" {
   name       = "mysql"
@@ -43,4 +44,11 @@ resource "aws_default_route_table" "my-route-table" {
   tags = {
     Name = "my-route-table"
   }
+}
+
+#라우팅테이블 연결
+resource "aws_route_table_association" "my-subnet_my-ro-table" {
+  for_each = var.my-vpc-subnet
+  subnet_id = aws_subnet.my-subnet["${each.key}"].id
+  route_table_id = aws_default_route_table.my-route-table.id
 }

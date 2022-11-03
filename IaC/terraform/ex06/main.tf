@@ -19,7 +19,14 @@ resource "aws_db_instance" "mysql_db" {
   publicly_accessible = true #퍼블릭엑서스 여부
 }
 
-/*
+resource "null_resource" "db_setup" {
+  depends_on = [aws_db_instance.mysql_db ] #db 인스턴스의 mysql_db가 생성이 되면 실행하는 리소스이다 라는뜻
+  
+  provisioner "local-exec" {
+    command = "mysql -u admin --password=qwer1234 -h ${aws_db_instance.mysql_db.address} --database=yoskr_db < ./rds.sql "
+  }
+}
+
 resource "aws_instance" "app_server" {
   for_each = toset(var.app_list)
   ami           = "ami-068a0feb96796b48d"
@@ -28,6 +35,14 @@ resource "aws_instance" "app_server" {
   subnet_id = aws_subnet.my-subnet["a"].id #서브넷아이디(가용영역)
   associate_public_ip_address = true #공용아이피주소
   vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
+  
+  user_data = <<-EOF
+  #!/bin/bash
+  sudo wget 
+  sudo apt install -y apache2
+  sudo systemctl restart apache2
+  EOF
+  
   tags = {
     Name = "${each.value}"
   }
@@ -42,4 +57,3 @@ output "my-subnet-Name" {
 output "my-sg-Name" {
     value = [for my-sg in aws_security_group.default_sg_add: my-sg.tags.Name]
 }
-*/

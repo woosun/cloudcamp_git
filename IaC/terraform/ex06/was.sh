@@ -1,14 +1,13 @@
 #!/bin/bash
 sudo apt update -y
 sudo apt install software-properties-common -y
-sudo add-apt-repository ppa:deadsnakes/ppa
+sudo add-apt-repository ppa:deadsnakes/ppa -y
 #파이썬 설치
 sudo apt -y install python3.9
+sudo apt -y install python3-pip
 #깃설치
 sudo apt-get -y install git
 sudo apt -y install git
-alias python=python3
-alias pip=pip3
 #깃으로 클론떠오기
 git clone https://github.com/woosun/backend.git
 cd ./backend/
