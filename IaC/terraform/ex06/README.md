@@ -87,7 +87,7 @@ provisioner "remote-exec" {
 >  - db 보안그룹 생성
 >  - db rds 생성
 >  - 테라폼 환경에서 db 접속하여 테이블 생서 mysql -u admin --password=qwer1234 -h 주소 --database=yoskr_db < c:\rds.sql
-> > - mysql 다운받고 c:에 풀고 path 환경변수에 등록 C:\mysql\bin
+>  - mysql 다운받고 c:에 풀고 path 환경변수에 등록 C:\mysql\bin
 2. gunicon ec2 생성
 >  파이썬 설치 및 셋팅설정
 ```
