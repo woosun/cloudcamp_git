@@ -1,6 +1,6 @@
-# !REF > 참조값 불러오기
 
-
+> !REF > 참조값 불러오기
+```
 AWSTemplateFormatVersion: 2010-09-09 #특정버전에서 사용하는 문법이다 라는 뜻
 Resources:
     EC2Instance: #이름쓰는부분
@@ -16,3 +16,4 @@ Resources:
             DeviceName: /dev/sda1
             Ebs:
                 VolumeSize: 8 #단위는 GB
+```
