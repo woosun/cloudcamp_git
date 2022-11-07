@@ -71,7 +71,37 @@ ssh-copy-id root@192.168.179.110
 - 매니지드노드의 아이피
 > 암호입력(매니지드노드의 암호)
 ```
+> 기본적인 inventory , playbook 구조
 
+> 템플릿 위치는 사용자마다 다를수있다
+```bash
+명령어 실행위치
+├── inventory
+│   └── hosts.yaml
+│
+└── playbook
+    ├── web
+    │    │── template
+    │    │     ├── 설정파일
+    │    │     └── 코드파일
+    │    ├── web-install.yaml
+    │    ├── web-config.yaml
+    │    └── web-start.yaml
+    ├── was
+    │    │── template
+    │    │     ├── 설정파일
+    │    │     └── 코드파일
+    │    ├── was-install.yaml
+    │    ├── was-config.yaml
+    │    └── was-start.yaml
+    └── db
+         │── template
+         │     └── rds.sql
+         ├── db-install.yaml
+         ├── db-config.yaml
+         └── db-start.yaml
+#ansible-playbook -i inventory/hosts.yaml playbook/db/db-install.yaml
+``` 
 1. <a href="./ex01">3tir 아키텍쳐 실습 (nginx + flask + mysql)</a>
  
 2. <a href="./ex00">3tir 아키텍쳐 실습 (apache + tomcat + mysql)</a>
