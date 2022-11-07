@@ -9,6 +9,6 @@
 
 > 코드로 만드는 인프라 라는 뜻.
 
-+ <a href="./tarrform">tarrform</a>
-+ <a href="./cloudformation">cloudformation</a>
-+ <a href="./Ansible">Ansible</a>
++ <a href="./IaC/tarrform">tarrform</a>
++ <a href="./IaC/cloudformation">cloudformation</a>
++ <a href="./IaC/Ansible">Ansible</a>
