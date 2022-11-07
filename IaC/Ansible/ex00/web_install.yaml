@@ -1,0 +1,28 @@
+- hosts: ["192.168.179.110"]
+  tasks:
+  - name: "Insatll httpd server"
+    shell: |
+      yum update -y
+      yum install -y httpd  httpd-devel gcc gcc-c++ wget make redhat-rpm-config
+    become: yes
+
+  - name: "Insatll httpd server"
+    shell: |
+      wget -O /tmp/tomcat-connectors-1.2.48-src.tar.gz https://dlcdn.apache.org/tomcat/tomcat-connectors/jk/tomcat-connectors-1.2.48-src.tar.gz
+    become: yes
+
+  - name: "Unarchive tomcat connector"
+    unarchive:
+      src: /tmp/tomcat-connectors-1.2.48-src.tar.gz
+      dest: /tmp/
+      remote_src: True
+    become: yes
+
+  - name: "Insatll tomcat connector"
+    shell: |
+      cd /tmp/tomcat-connectors-1.2.48-src/native
+      ./configure --with-apxs=/usr/bin/apxs
+      make
+      cp /tmp/tomcat-connectors-1.2.48-src/native/apache-2.0/mod_jk.so /usr/lib64/httpd/modules/mod_jk.so
+      chmod 755 /usr/lib64/httpd/modules/mod_jk.so
+    become: yes

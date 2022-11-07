@@ -1,0 +1,8 @@
+- hosts: ["192.168.179.120"]
+  tasks:
+  - name: "Start Tomcat"
+    shell: |
+      /usr/local/tomcat9/bin/shutdown.sh
+      sleep 5
+      nohup /usr/local/tomcat9/bin/startup.sh &
+    become: yes

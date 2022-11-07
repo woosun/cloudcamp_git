@@ -1,0 +1,6 @@
+- hosts: ["192.168.179.110"]
+  tasks:
+  - name: "Start Httpd"
+    shell: |
+      systemctl restart httpd
+    become: yes

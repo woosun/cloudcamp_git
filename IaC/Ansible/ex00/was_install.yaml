@@ -1,0 +1,29 @@
+- hosts: ["192.168.179.120"]
+  tasks:
+  - name: "Insatll wget"
+    shell: |
+      yum update -y
+      yum install -y wget
+    become: yes
+
+  - name: "Insatll java"
+    shell: |
+      yum -y install java-1.8.0-openjdk-devel.x86_64
+    become: yes
+
+  - name: "Download Tomcat"
+    shell: |
+      wget  -O /tmp/apache-tomcat-9.0.68.tar.gz https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.68/bin/apache-tomcat-9.0.68.tar.gz
+    become: yes
+
+  - name: "Unarchive Tomcat"
+    unarchive:
+      src: "/tmp/apache-tomcat-9.0.68.tar.gz"
+      dest: "/tmp"
+      remote_src: True
+    become: yes
+
+  - name: "Move Tomcat"
+    shell: |
+      mv /tmp/apache-tomcat-9.0.68 /usr/local/tomcat9
+    become: yes

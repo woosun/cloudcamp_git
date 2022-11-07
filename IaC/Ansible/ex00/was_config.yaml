@@ -1,0 +1,40 @@
+- hosts: ["192.168.179.120"]
+  tasks:
+  - name: "Delete original config file"
+    shell: |
+      rm -rf /usr/local/tomcat9/conf/server.xml
+    become: yes
+
+  - name: "Copy config file"
+    copy:
+      src: config/server.xml
+      dest: /usr/local/tomcat9/conf/server.xml
+    become: yes
+
+  - name: "Create Context Dir"
+    shell: |
+      mkdir /usr/local/tomcat9/webapps/yoskr
+    become: yes
+
+  - name: "Copy jsp file"
+    copy:
+      src: config/test.jsp
+      dest: /usr/local/tomcat9/webapps/yoskr/test.jsp
+    become: yes
+
+  - name: "Download mysql-connector"
+    shell: |
+      wget -O /tmp/mysql-connector-java-8.0.19.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.19.tar.gz
+    become: yes
+
+  - name: "Unarchive mysql-connector"
+    unarchive:
+      src: "/tmp/mysql-connector-java-8.0.19.tar.gz"
+      dest: "/tmp"
+      remote_src: True
+    become: yes
+
+  - name: "Copy mysql-connector"
+    shell: |
+      cp /tmp/mysql-connector-java-8.0.19/*.jar /usr/local/tomcat9/lib/
+    become: yes

@@ -1,0 +1,30 @@
+- hosts: ["192.168.179.120"]
+  tasks:
+  - name: "Install python3.9"
+    shell: |
+      yum update -y
+      yum groupinstall 'development tools' -y 
+      yum install wget openssl-devel bzip2-devel libffi-devel xz-devel -y
+      wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz
+      tar xvf Python-3.9.6.tgz
+      cd Python-3.9.6 && ./configure --enable-optimizations
+      make altinstall
+      alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.9 1
+      alternatives --set python3 /usr/local/bin/python3.9 && echo "2" | alternatives --config python
+      /usr/local/bin/python3.9 -m pip install --upgrade pip
+      alternatives --install /usr/bin/pip pip /usr/local/bin/pip3.9 1 && alternatives --set pip /usr/local/bin/pip3.9
+    become: yes
+  - name: "Install git"
+    shell: |
+      yum -y install git
+      git clone https://github.com/woosun/backend.git
+    become: yes
+  - name: "Install flask server"
+    shell: |
+      cd ./backend/
+      pip install -r ./requirements.txt
+    become: yes
+  - name: "Copy file"
+    copy:
+      src: "config/was_start.sh"
+      dest: "/root/backend/was_start.sh"

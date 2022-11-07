@@ -1,0 +1,17 @@
+- hosts: ["192.168.179.130"]
+  tasks:
+  - name: "Install mysql server"
+    shell: |
+      yum update -y
+      systemctl stop firewalld
+      systemctl disable firewalld
+      setenforce 0
+      yum install -y mysql-server
+    become: yes
+  - name: "Install python"
+    shell: |
+      yum install -y python3 python3-pip
+    become: yes
+  - name: "Install pymysql"
+    pip:
+      name: pymysql

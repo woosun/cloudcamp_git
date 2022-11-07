@@ -1,0 +1,28 @@
+- hosts: ["192.168.179.130"]
+  tasks:
+  - name: "Install mysql server"
+    shell: |
+      yum update -y
+      yum install -y mysql-server
+    become: yes
+
+  - name: "Start mysql Server"
+    shell: |
+      systemctl restart mysqld
+    become: yes
+
+  - name: "Install Python3"
+    shell: |
+      yum install -y python3 python3-pip
+    become: yes
+
+  - name: "Install pymysql"
+    pip:
+      name: pymysql
+
+  - name: "mysql config"
+    mysql_user:
+      user: root
+      password: "qwer1234"
+      host: "%"
+      login_unix_socket: /var/lib/mysql/mysql.sock

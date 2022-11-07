@@ -1,0 +1,18 @@
+- hosts: ["192.168.100.10"]
+  tasks:
+  - name: "Delete original conf file"
+    shell: |
+      rm -rf /etc/httpd/conf/httpd.conf
+    become: yes
+
+  - name: "Copy conf file"
+    copy:
+      src: config/httpd.conf
+      dest: /etc/httpd/conf/httpd.conf
+    become: yes
+
+  - name: "Copy workers.properties file"
+    copy:
+      src: config/workers.properties
+      dest: /etc/httpd/conf/workers.properties
+    become: yes

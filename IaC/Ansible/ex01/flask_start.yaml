@@ -1,0 +1,13 @@
+- hosts: ["192.168.179.120"]
+  tasks:
+  - name: "start flask server"
+    shell: |
+      cd ./backend/
+      export DB_HOST=192.168.179.130
+      export DB_USER=yoskr
+      export DB_DBNAME=yoskr_db
+      export MYSQL_ROOT_PASSWORD=qwer1234
+      chmod +x ./was_start.sh
+      nohup ./was_start.sh &
+      sleep 1
+    become: yes
