@@ -116,6 +116,6 @@ hosts: ["192.168.179.130"]
 	    when: switch == "off"
 ```
 
-# <a href="./ex02">소스보기</a>
+# <a href="./ex02">소스보기 < Click </a>
 - 조건문은 자신의 상태에 따라 분기처리에 사용할수있다.
 - 상태모듈 https://docs.ansible.com/ansible/latest/collections/ansible/builtin/set_stats_module.html
