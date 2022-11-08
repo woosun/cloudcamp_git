@@ -1,0 +1,11 @@
+- hosts: ["192.168.179.110"]
+  tasks:
+  - name: "Install nginx server"
+    shell: |
+      yum update -y
+      yum install nginx -y
+    become: yes
+  - name: "Install git"
+    shell: |    
+      yum -y install git
+    become: yes

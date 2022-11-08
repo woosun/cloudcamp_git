@@ -1,0 +1,5 @@
+was_install_apps:
+  - software-properties-common
+  - git
+  - python3.9
+  - python3.9-distutils

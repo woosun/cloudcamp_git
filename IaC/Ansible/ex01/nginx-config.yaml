@@ -1,25 +1,16 @@
-- hosts: ["192.168.179.110"]
+- hosts: [web]
   tasks:
-  - name: "nginx conf rerwite"
-    shell: |
-      rm /etc/nginx/nginx.conf
-    become: yes
-
-  - name: "Copy file"
-    copy:
-      src: "config/nginx.conf"
-      dest: "/etc/nginx/nginx.conf"
-    become: yes
-    
+  - 
   - name: "frontend_clone"
     shell: |
       git clone https://github.com/woosun/frontend.git
       cd ./frontend/
-      mv ./frontend.conf /etc/nginx/conf.d/default.conf
-      rm /etc/nginx/sites-enabled/default
-      sed -i "s/svc-was/192.168.179.120/g" /etc/nginx/conf.d/default.conf
-      sed -i "s/8080/8000/g" /etc/nginx/conf.d/default.conf
-      mkdir /usr/share/nginx/html/static
-      mv ./hello.html /usr/share/nginx/html/static/
-      sed -i "s/svc-was/192.168.179.110/g" /usr/share/nginx/html/static/hello.html
+      source /tmp/env_was_host
+      sudo mv ./frontend.conf /etc/nginx/conf.d/default.conf
+      sudo rm /etc/nginx/sites-enabled/default
+      sudo sed -i "s/svc-was/$WAS_ADDR/g" /etc/nginx/conf.d/default.conf
+      sudo sed -i "s/8080/8000/g" /etc/nginx/conf.d/default.conf
+      sudo mkdir /usr/share/nginx/html/static
+      sudo mv ./hello.html /usr/share/nginx/html/static/
+      sudo sed -i "s/svc-was/$WEB_PUB_ADDR/g" /usr/share/nginx/html/static/hello.html
     become: yes

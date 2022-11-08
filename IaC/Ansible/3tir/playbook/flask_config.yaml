@@ -1,0 +1,25 @@
+- hosts: was
+  vars_files:
+    - vars/was_var.yml
+  tasks:
+  - name: "Git Clone"
+    shell: |
+      git clone https://github.com/woosun/backend.git
+    become: yes
+  - name: "Install flask server"
+    shell: |
+      cd ./backend/
+      pip install -r ./requirements.txt
+    become: yes
+#DBCONFIG COPY
+  - name: "Copy path file"
+    copy:
+      src: config/env_db_host
+      dest: /temp/env_db_host
+    become: yes
+
+  - name: "Copy start_sh file"
+    copy:
+      src: config/was_start.sh
+      dest: cd ./backend/was_start.sh
+    become: yes

@@ -1,0 +1,21 @@
+- hosts: was
+  vars_files:
+    - vars/was_var.yml
+  tasks:
+  - name: "apt update repo add"
+    shell: |
+      apt update -y
+      sudo add-apt-repository ppa:deadsnakes/ppa -y
+    become: yes
+  - name: "Insatll App"
+    shell: |
+      apt -y install "{{ item }}"
+    become: yes
+    with_items:
+      - "{{ was_apps }}"
+  - name: "Install Python3.9 pip 3.9"
+    shell: |
+      sudo mkdir /apps
+      sudo curl https://bootstrap.pypa.io/get-pip.py -o /apps/get-pip.py
+      sudo python3.9 /apps/get-pip.py
+    become: yes

@@ -1,0 +1,30 @@
+- hosts: ["192.168.179.130"] 
+  tasks:
+  - name: Create database user with name 'yoskr'
+    community.mysql.mysql_user:
+      name: yoskr
+      password: qwer1234
+      priv: '*.*:ALL'
+      host: '%'
+      state: present
+
+  - name: "Create a new database with name 'yoskr_db'"
+    community.mysql.mysql_db:
+      login_user: "yoskr"
+      login_password: "qwer1234"
+      name: "yoskr_db"
+      state: present
+
+  - name: "Copy file"
+    copy:
+      src: "config/rds.sql"
+      dest: "/root/rds.sql"
+
+  - name: "create db"
+    shell: |
+      mysql -u root --password=qwer1234 --database=yoskr_db < /root/rds.sql
+
+  - name: "Start mysql server"
+    shell: |
+      systemctl restart mysqld
+    become: yes

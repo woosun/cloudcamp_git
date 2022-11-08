@@ -1,0 +1,10 @@
+- hosts: was
+  tasks:
+  - name: "start flask server"
+    shell: |
+      source /temp/env_db_host
+      cd ./backend/
+      chmod +x ./was_start.sh
+      nohup ./was_start.sh &
+      sleep 1
+    become: yes
