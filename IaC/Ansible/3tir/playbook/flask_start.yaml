@@ -1,10 +1,15 @@
 - hosts: was
+  vars_files:
+    - /root/3tir/playbook/vars/env_db_host.yaml
   tasks:
   - name: "start flask server"
     shell: |
-      source /temp/env_db_host
       cd ./backend/
       chmod +x ./was_start.sh
+      sed -i -e 's/\r//g' ./was_start.sh
       nohup ./was_start.sh &
       sleep 1
     become: yes
+    register: result
+  - debug:
+      msg: "{{result}}"

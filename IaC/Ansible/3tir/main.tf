@@ -23,74 +23,39 @@ resource "null_resource" "db_setup" {
   depends_on = [aws_db_instance.mysql_db ] #db 인스턴스의 mysql_db가 생성이 되면 실행하는 리소스이다 라는뜻
   
   provisioner "local-exec" {
-    command = "mysql -u admin --password=qwer1234 -h ${aws_db_instance.mysql_db.address} --database=yoskr_db < ./rds.sql "
+    command = "mysql -u admin --password=qwer1234 -h ${aws_db_instance.mysql_db.address} --database=yoskr_db < /root/3tir/playbook/config/rds.sql"
   }
 }
 
-resource "aws_instance" "app_server" {
-  for_each = toset(var.app_list)
+
+resource "aws_instance" "was_server" {
+  for_each = toset(var.app_list1)
   ami           = "ami-068a0feb96796b48d"
   instance_type = "t2.micro"
   key_name = "ec01"
   subnet_id = each.value == "web" ? aws_subnet.my-subnet["a"].id :  aws_subnet.my-subnet["c"].id 
   associate_public_ip_address = true #공용아이피주소
   vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
-
-
-#web
-  provisioner "local-exec" {
-    count = each.value == "web" ? 1 : 0
-    command = <<EOF
-        echo '[web]' > web_inventory
-        echo '${aws_instance.app_server["web"].public_ip} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/key' >> web_inventory
-        echo 'export WAS_ADDR=${aws_instance.app_server["was"].private_ip}' > env_was_host
-        echo 'export WEB_PUB_ADDR=${self.public_ip}' >> env_was_host
-        sleep 10
-        EOF
-  }
-  provisioner "local-exec" {
-    count = each.value == "web" ? 1 : 0
-    command = <<EOF
-        ANSIBLE_HOST_KEY_CHECKING=False \
-        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-install.yaml
-        EOF
-  }
-
-  provisioner "local-exec" {
-    count = each.value == "web" ? 1 : 0
-    command = <<EOF
-        ANSIBLE_HOST_KEY_CHECKING=False \
-        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-config.yaml
-        EOF
-  }
-
 #was
   provisioner "local-exec" {
-    count = each.value == "web" ? 1 : 0
     command = <<EOF
-        echo '[was]' >> was_inventory \
-        echo '${aws_instance.app_server["was"].public_ip} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/key' >> was_inventory \
-        echo 'export DB_HOST=${aws_db_instance.mysql_db.address}' >> config/env_db_host \
-        echo 'export DB_USER=admin' >> config/env_db_host \
-        echo 'export DB_DBNAME=yoskr_db' >> config/env_db_host \
-        echo 'export MYSQL_ROOT_PASSWORD=qwer1234' >> config/env_db_host \
+        echo "[was]" > was_inventory
+        echo "${self.public_ip} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/ec01key" >> was_inventory
+        echo "export DB_HOST:${aws_db_instance.mysql_db.address}" > /root/3tir/playbook/var/env_db_host.yaml
+        echo "export DB_USER:admin" >> /root/3tir/playbook/var/env_db_host.yaml
+        echo "export DB_DBNAME:yoskr_db" >> /root/3tir/playbook/var/env_db_host.yaml
+        echo "export MYSQL_ROOT_PASSWORD:qwer1234" >> /root/3tir/playbook/var/env_db_host.yaml
         sleep 10
         EOF
   }
-
   provisioner "local-exec" {
-    count = each.value == "was" ? 1 : 0
     command = <<EOF
         ANSIBLE_HOST_KEY_CHECKING=False \
         ansible-playbook -i was_inventory /root/3tir/playbook/flask-install.yaml
-        EOF
-  }
-
-  provisioner "local-exec" {
-    count = each.value == "was" ? 1 : 0
-    command = <<EOF
-        ANSIBLE_HOST_KEY_CHECKING=False \
-        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-config.yaml
+        sleep 10
+        ansible-playbook -i was_inventory /root/3tir/playbook/flask-config.yaml
+        sleep 10
+        ansible-playbook -i was_inventory /root/3tir/playbook/flask-start.yaml
         EOF
   }
 
@@ -99,7 +64,48 @@ resource "aws_instance" "app_server" {
   }
 }
 
-output "app_server_public_ip" { #출력
+
+#web
+resource "aws_instance" "web_server" {
+  for_each = toset(var.app_list)
+  ami           = "ami-068a0feb96796b48d"
+  instance_type = "t2.micro"
+  key_name = "ec01"
+  subnet_id = each.value == "web" ? aws_subnet.my-subnet["a"].id :  aws_subnet.my-subnet["c"].id 
+  associate_public_ip_address = true #공용아이피주소
+  vpc_security_group_ids = each.value == "web" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["web_sg"].id] : each.value == "was" ? [ aws_security_group.default_sg_add["ssh_sg"].id, aws_security_group.default_sg_add["was_sg"].id] : [aws_security_group.default_sg_add["ssh_sg"].id]
+
+  provisioner "local-exec" {
+    command = <<EOF
+        echo "[web]" > web_inventory
+        echo "${self.public_ip} ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/ec01key" >> web_inventory
+        echo "export WAS_ADDR:${aws_instance.was_server["was"].private_ip}" > /root/3tir/playbook/var/env_was_host.yaml
+        echo "export WEB_PUB_ADDR:${self.public_ip}" >> /root/3tir/playbook/var/env_was_host.yaml
+        sleep 10
+        EOF
+  }
+  provisioner "local-exec" {
+    command = <<EOF
+        ANSIBLE_HOST_KEY_CHECKING=False \
+        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-install.yaml
+        sleep 10
+        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-config.yaml
+        sleep 10
+        ansible-playbook -i web_inventory /root/3tir/playbook/nginx-start.yaml
+        EOF
+  }
+
+  tags = {
+      Name = "${each.value}"
+  }
+}
+
+output "was_server_public_ip" { #출력
   description = "AWS_Public_Ip"
-  value = [for ec2 in aws_instance.app_server : ec2.public_ip ]
+  value = [for ec2 in aws_instance.was_server : ec2.public_ip ]
+}
+
+output "web_server_public_ip" { #출력
+  description = "AWS_Public_Ip"
+  value = [for ec2 in aws_instance.web_server : ec2.public_ip ]
 }

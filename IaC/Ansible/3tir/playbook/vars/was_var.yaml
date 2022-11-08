@@ -1,4 +1,4 @@
-was_install_apps:
+was_apps:
   - software-properties-common
   - git
   - python3.9

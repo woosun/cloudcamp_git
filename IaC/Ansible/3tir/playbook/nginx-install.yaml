@@ -1,11 +1,14 @@
-- hosts: ["192.168.179.110"]
+- hosts: web
+  vars_files:
+    - /root/3tir/playbook/vars/web_var.yaml
   tasks:
-  - name: "Install nginx server"
+  - name: "apt update repo add"
     shell: |
-      yum update -y
-      yum install nginx -y
+      apt update -y
     become: yes
-  - name: "Install git"
-    shell: |    
-      yum -y install git
+  - name: "Insatll App"
+    shell: |
+      apt -y install "{{ item }}"
     become: yes
+    with_items:
+      - "{{ web_apps }}"

@@ -1,6 +1,6 @@
 - hosts: was
   vars_files:
-    - vars/was_var.yml
+    - /root/3tir/playbook/vars/was_var.yaml
   tasks:
   - name: "apt update repo add"
     shell: |
