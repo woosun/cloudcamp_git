@@ -1,0 +1,75 @@
+#변수
+- hosts: ["192.168.179.130"] 
+  vars:
+    var1: "hello ansible"
+  tasks:
+  - name: "var test"
+    debug:
+      msg: 'var1 : {{ var1 }}'
+
+
+---
+#반복문 1
+- hosts: ["192.168.179.130"] 
+  tasks:
+  - name: "loop test"
+    debug:
+      msg: '{{ item }}'
+    with_items:
+      - apple
+      - banana
+      - kiwi
+
+---
+#반복문 2
+- hosts: ["192.168.179.130"] 
+  vars:
+    list1:
+      - apple
+      - banana
+      - kiwi
+  tasks:
+  - name: "loop test"
+    debug:
+      msg: "{{ item }}"
+    with_items:
+      - "{{ list1 }}" #변수로 불러올수도있고 변수파일을 불러올수도 있다.
+
+---
+#조건문
+- hosts: ["192.168.179.130"] 
+  vars:
+    switch: "on"
+  tasks:
+  - debug:
+      msg: "hello switch on"
+    when: switch == "on"
+  - debug:
+      msg: "hello switch off"
+    when: switch == "off"
+---
+#조건문2 상태분기
+- hosts: ["192.168.179.110"]
+  tasks:
+  - stat:
+      path: "/var/www/html/ansible1.html"
+    register: st
+  - debug:
+      msg: "ansible.html file exist"
+    when: st.stat.exists
+#   when: st.stat.size >0 
+  - debug:
+      msg: "ansible.html file not exist"
+    when: not st.stat.exists
+
+---
+#조건문3
+- hosts: ["192.168.179.110"]
+  tasks:
+  - name: "register test"
+    shell: |
+      ls /
+    register: result  
+  - debug:
+      msg: "{{result}}"
+    when: result.stdout != "" #결과값에
