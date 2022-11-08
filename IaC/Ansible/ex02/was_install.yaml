@@ -1,0 +1,54 @@
+- hosts: ["192.168.179.120"]
+  vars_files:
+    - vars/was_install_var.yml
+  tasks:
+  - name: "Update yum"
+    shell: |
+      yum update -y
+    become: yes
+
+  - name: "Insatll Prog"
+    shell: |
+      yum -y install "{{ item }}"
+    with_items:
+      - "{{ was_install_apps }}"
+
+  - name: "Download Tomcat"
+    shell: |
+      wget  -O /tmp/apache-tomcat-{{ was_tomcat_var }}.tar.gz https://dlcdn.apache.org/tomcat/tomcat-9/v{{ was_tomcat_var }}/bin/apache-tomcat-{{ was_tomcat_var }}.tar.gz
+    become: yes
+    
+  - name: "Check Download Tomcat"
+    stat:
+      path: "/tmp/apache-tomcat-{{ was_tomcat_var }}.tar.gz"
+    register: down_tomcat
+
+
+  - name: "Unarchive Tomcat"
+    unarchive:
+      src: "/tmp/apache-tomcat-{{ was_tomcat_var }}.tar.gz"
+      dest: "/tmp"
+      remote_src: True
+    become: yes
+    when: down_tomcat.stat.size > 0 
+
+  - name: "Check Unarchive Tomcat"
+    shell: |
+      ls /tmp/apache-tomcat-{{ was_tomcat_var }}/
+    register: result_arc
+
+  - name: "Check already Tomcat"
+    stat:
+      path: "/usr/local/tomcat9/apache-tomcat-{{ was_tomcat_var }}/"
+    register: result_dir
+
+
+  - name: "Move Tomcat"
+    shell: |
+      mv /tmp/apache-tomcat-"{{ was_tomcat_var }}" /usr/local/tomcat9
+    become: yes
+    when: 
+      - result_arc.stdout !=""  #아카이브가 제대로 풀렷는지
+      - result_dir.stat.exists == false  #옴길곳이 비어있는지
+
+      false

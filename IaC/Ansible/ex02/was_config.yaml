@@ -1,4 +1,6 @@
 - hosts: ["192.168.179.120"]
+  vars_files:
+    - vars/was_install_var.yml
   vars:
     project_path: "yoskr"
   tasks:
@@ -7,18 +9,6 @@
       src: config/server.xml.j2
       dest: /usr/local/tomcat9/conf/server.xml
     become: yes
-#    template 은 대체해주는 방식이라
-#    삭제후 붙여넣기가 필요없다.
-#  - name: "Delete original config file"
-#    shell: |
-#      rm -rf /usr/local/tomcat9/conf/server.xml
-#    become: yes
-#  - name: "Copy config file"
-#    copy:
-#      src: config/server.xml
-#      dest: /usr/local/tomcat9/conf/server.xml
-#    become: yes
-
   - name: "Create Context Dir"
     shell: |
       mkdir /usr/local/tomcat9/webapps/{{ project_path }}
@@ -32,17 +22,17 @@
 
   - name: "Download mysql-connector"
     shell: |
-      wget -O /tmp/mysql-connector-java-8.0.19.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-8.0.19.tar.gz
+      wget -O /tmp/{{ mysql-connector_var }}.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/{{ mysql-connector_var }}.tar.gz
     become: yes
 
   - name: "Unarchive mysql-connector"
     unarchive:
-      src: "/tmp/mysql-connector-java-8.0.19.tar.gz"
+      src: "/tmp/{{ mysql-connector_var }}.tar.gz"
       dest: "/tmp"
       remote_src: True
     become: yes
 
   - name: "Copy mysql-connector"
     shell: |
-      cp /tmp/mysql-connector-java-8.0.19/*.jar /usr/local/tomcat9/lib/
+      cp /tmp/{{ mysql-connector_var }}/*.jar /usr/local/tomcat9/lib/
     become: yes

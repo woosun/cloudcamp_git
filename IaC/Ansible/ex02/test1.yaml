@@ -1,0 +1,14 @@
+- hosts: ["192.168.179.110"]
+  vars:
+    var1: "hello ansible"
+  tasks:
+  #이건 origin.txt 파일 그대로 복사한다.
+  - name: "copy"
+    copy:
+      src: origin.txt
+      dest: /tmp/copy.txt
+  # 이건 origin.txt 변수값을 집어넣는다.
+  - name: "template"
+    template:
+      src: origin.txt
+      dest: /tmp/template.txt

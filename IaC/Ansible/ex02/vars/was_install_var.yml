@@ -1,0 +1,5 @@
+was_install_apps:
+  - wget
+  - java-1.8.0-openjdk-devel.x86_64
+was_tomcat_var: "9.0.68"
+mysql-connector_var: "mysql-connector-java-8.0.19"
