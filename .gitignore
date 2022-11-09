@@ -44,3 +44,4 @@ IaC/terraform/ex06/ec01.pem
 IaC/terraform/ex07/terraform.tfstate.backup
 IaC/terraform/ex07/terraform.tfstate
 IaC/terraform/ex06/.terraform.tfstate.lock.info
+IaC/Ansible/3tir/env_db_host.yaml
