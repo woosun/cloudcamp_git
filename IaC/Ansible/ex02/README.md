@@ -4,26 +4,26 @@
 1. 변수
 + 변수 타입
 ```yaml
-	vars:
-	  string_var: "A"
-	  number_var: 1
-	  boolean_var: "yes"
-	  list_var:
-	    - A
-	    - B
-	    - C
-	  dict_var:
-	      key_a: "val_a"
-	      key_b: "val_b"
-	      key_c: "val_c"
+  vars:
+    string_var: "A"
+    number_var: 1
+    boolean_var: "yes"
+    list_var:
+      - A
+      - B
+      - C
+    dict_var:
+        key_a: "val_a"
+        key_b: "val_b"
+        key_c: "val_c"
 ```
 + 변수 만드는 법
 ```yaml
-	- name: test var
-	  vars_files:
-	    - vars/main.yml
-	  vars:
-	    key1: value1
+  - name: test var
+    vars_files:
+      - vars/main.yml
+    vars:
+      key1: value1
 ```
 
 + 변수 사용하는 법 (jinja2 문법)
@@ -34,27 +34,27 @@
 2. 반복문
 > 모듈에 with_items: 선언
 ```yaml
-	with_items:
-	  - apple
-	  - banana
-	  - kiwi
+  with_items:
+    - apple
+    - banana
+    - kiwi
 
-	사용할 때는 {{ item }} 으로 사용
+  사용할 때는 {{ item }} 으로 사용
 ```
 
 3. 조건문
 
 > 모듈에 when: 선언
 ```yaml
-	vars:
-	  switch: "on"
-	tasks:
-	  - debug:
-	      msg: "hello switch on"
-	    when: switch == "on"
-	  - debug:
-	      msg: "hello switch off"
-	    when: switch == "off"
+  vars:
+    switch: "on"
+  tasks:
+    - debug:
+        msg: "hello switch on"
+      when: switch == "on"
+    - debug:
+        msg: "hello switch off"
+      when: switch == "off"
 ```
 
 
@@ -140,7 +140,8 @@
 
   - name: "Download mysql-connector"
     shell: |
-      wget -O /tmp/{{ mysql-connector_var }}.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/{{ mysql-connector_var }}.tar.gz
+      wget -O /tmp/{{ mysql-connector_var }}.tar.gz https://dev.mysql.com/get/Downloads/Connector-J/{{ mysql-connector_v
+      ar }}.tar.gz
     become: yes
 
   - name: "Unarchive mysql-connector"
