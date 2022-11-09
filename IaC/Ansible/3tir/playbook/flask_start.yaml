@@ -2,8 +2,12 @@
   vars_files:
     - /root/3tir/playbook/vars/env_db_host.yaml
   tasks:
-  - name: "start flask server"
+  - name: "start flask server & db 환경변수 불러오기"
     shell: |
+      export {{DB_HOST}}
+      export {{DB_USER}}
+      export {{DB_DBNAME}}
+      export {{MYSQL_ROOT_PASSWORD}}
       cd ./backend/
       chmod +x ./was_start.sh
       sed -i -e 's/\r//g' ./was_start.sh

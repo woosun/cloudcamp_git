@@ -1,4 +1,4 @@
-- hosts: ["192.168.179.110"]
+- hosts: web
   tasks:
   - name: "Start nginx server"
     shell: |

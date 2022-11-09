@@ -31,11 +31,11 @@
 	sed -i -e "s/enabled=1/enabled=0/g" /etc/yum.repos.d/CentOS-SIG-ansible-29.repo
 	dnf --enablerepo=centos-ansible-29 -y install ansible
 
-ubuntu 기준
-sudo apt update
-sudo apt install software-properties-common
-sudo add-apt-repository --yes --update ppa:ansible/ansible
-sudo apt install ansible
+  ubuntu 기준
+  sudo apt update
+  sudo apt install -y software-properties-common
+  sudo add-apt-repository --yes --update ppa:ansible/ansible
+  sudo apt install -y ansible
   3) 인벤토리	
     (1) 기본 인벤토리
 	/etc/ansible/hosts

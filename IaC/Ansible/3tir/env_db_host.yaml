@@ -1,0 +1,1 @@
+[was] echo 52.79.163.61 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=~/ec01key echo DB_HOST:DB_HOST=terraform-20221109005256463700000005.cpgrlrujeuhk.ap-northeast-2.rds.amazonaws.com echo DB_USER:DB_USER=admin echo DB_DBNAME:DB_DBNAME=yoskr_db echo MYSQL_ROOT_PASSWORD:MYSQL_ROOT_PASSWORD=qwer1234

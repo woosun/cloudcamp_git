@@ -1,6 +1,4 @@
 - hosts: was
-  vars_files:
-    - /root/3tir/playbook/vars/was_var.yaml
   tasks:
   - name: "Git Clone"
     shell: |
@@ -11,12 +9,9 @@
       cd ./backend/
       pip install -r ./requirements.txt
     become: yes
-#DBCONFIG COPY
-  - name: "Copy path file"
-    copy:
-      src: /root/3tir/playbook/config/env_db_host
-      dest: /tmp/env_db_host
-    become: yes
+    register: result
+  - debug:
+      msg: "{{result}}"
 
   - name: "Copy start_sh file"
     copy:
