@@ -45,3 +45,11 @@ IaC/terraform/ex07/terraform.tfstate.backup
 IaC/terraform/ex07/terraform.tfstate
 IaC/terraform/ex06/.terraform.tfstate.lock.info
 IaC/Ansible/3tir/env_db_host.yaml
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform/providers/registry.terraform.io/hashicorp/aws/4.38.0/linux_amd64/terraform-provider-aws_v4.38.0_x5
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform/providers/registry.terraform.io/hashicorp/aws/4.38.0/windows_386/terraform-provider-aws_v4.38.0_x5.exe
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.0/linux_amd64/terraform-provider-null_v3.2.0_x5
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform/providers/registry.terraform.io/hashicorp/null/3.2.0/windows_386/terraform-provider-null_v3.2.0_x5.exe
+IaC/Terrform+Ansible/final/3tier/env/test/terraform.tfstate.backup
+IaC/Terrform+Ansible/final/3tier/env/test/terraform.tfstate
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform/modules/modules.json
+IaC/Terrform+Ansible/final/3tier/env/test/.terraform.lock.hcl
